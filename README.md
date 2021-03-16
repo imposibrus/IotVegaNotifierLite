@@ -10,11 +10,11 @@ Application to notify IotVegaServer users about an alarm event.
 or
 
 - Using Ubuntu
-`curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+`curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
 sudo apt-get install -y nodejs`
 
 - Using Debian, as root
-`curl -sL https://deb.nodesource.com/setup_14.x | bash -
+`curl -fsSL https://deb.nodesource.com/setup_15.x | bash -
 apt-get install -y nodejs`
 
 - Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
