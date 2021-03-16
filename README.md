@@ -1,6 +1,6 @@
 [![IotVega](http://iotvega.com/images/logo.png)](http://iotvega.com)
 # IotVegaNotifierLite
-Application to notify IotVegaServer users about an alarm event.
+Application to notify IotVegaServer users about an alarm event. 
 ## Quick start
 #### Preparation
 - Install node.js 
