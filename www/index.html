@@ -1,0 +1,480 @@
+
+<!DOCTYPE html>
+<html ng-app="notifier">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1"> -->
+    <title>IOT Vega Notifier</title>
+    <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="shortcut icon" href="favicon.ico?vega">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/moment.min.js"></script>
+    <script src="./js/moment-with-locales.js"></script>
+</head>
+<body ng-controller='AppController'>
+    <script>
+        moment.lang('ru');
+    </script>
+    <div class='container authorization' ng-show='page=="auth"'>
+        <div class="row">
+           
+            <div class="col-md-offset-3 col-md-6">
+                <div class="form-horizontal">
+                    <span class="heading">АВТОРИЗАЦИЯ</span>
+                    <div class="form-group">
+                        <input ng-enter="enter_input()" type="text" ng-model='login' class="form-control" id="inputEmail" placeholder="Логин">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="form-group help">
+                        <input ng-enter="enter_input()" type="password" ng-model='password' class="form-control" id="inputPassword" placeholder="Пароль">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn btn-default" ng-click='authorization()'>ВХОД</div>
+                    </div>
+                </div>
+            </div>
+           
+        </div><!-- /.row -->
+    </div>
+    <header ng-show='page!="load"&&page!="auth"' class="navbar navbar-static-top" role="banner">
+        <div class="container">
+            <div class='navbar-header'>
+                <button class="navbar-toggle" type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand a_header">IotVega Notifier</a>
+            </div>
+            <div class='collapse navbar-collapse bs-navbar-collapse' role='navigation'>
+                <div class="row">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <ul class="nav navbar-nav navbar-nav-left">
+                            <li ng-click='page=1'><a href="" class="a_header">Настройки</a></li>
+                            <li ng-click='(page=2)&&getLogs()'><a href="" class="a_header">Логи</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-nav-right">
+                            <li ng-click='clearToken()'><a href="" class="a_header">Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class='loader' ng-show='page=="load"'>
+        <div class="container">
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+          </div>
+    </section>
+    <section ng-show='page==1'>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-xs-12">
+                    <h1>Настройки приложения</h1>
+                </div>
+                <div class="col-sm-3 col-md-3 col-xs-5">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-class='page_settings==1?"active":""' ng-click='selectGroupSettings(1)'><a href="">WebSocket</a></li>
+                        <li ng-class='page_settings==11?"active":""' ng-click='selectGroupSettings(11)'><a href="">Web интерфейс</a></li>
+                        <li ng-class='page_settings==2?"active":""' ng-click='selectGroupSettings(2)'><a href="">SMTP</a></li>
+                        <li ng-class='page_settings==3?"active":""' ng-click='selectGroupSettings(3)'><a href="">Telegram</a></li>
+                        <li ng-class='page_settings==4?"active":""' ng-click='selectGroupSettings(4)'><a href="">SMSC</a></li>
+                        <li ng-class='page_settings==5?"active":""' ng-click='selectGroupSettings(5)'><a href="">SMPP</a></li>
+                        <li ng-class='page_settings==6?"active":""' ng-click='selectGroupSettings(6)'><a href="">Администратор</a></li>
+                        <li ng-class='page_settings==7?"active":""' ng-click='selectGroupSettings(7)'><a href="">Прочие</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-9 col-md-9 col-xs-7">
+                    <div class="btn-group button_settings">
+                        <!-- <button type="button" class="btn btn-danger">Сброс</button> -->
+                        <button type="button" class="btn btn-default" ng-click='getSettings()'>Текущие</button>
+                        <button type="button" class="btn btn-success" ng-click='saveSettings()'>Сохранить</button>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==1'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки WebSocket API IotVega Server</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Адрес WebSocket API<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._ws.url' type="text" class="form-control" placeholder="ws://example.com/ws"  title="Адрес WebSocket API">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пользователь<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._ws.login' type="text" class="form-control" placeholder="demo"  title="Пользователь/Login">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._ws.password' type='{{show_ws_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_ws_pass?"fa-eye":"fa-eye-slash"' ng-click='show_ws_pass=!show_ws_pass'></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==11'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки интерфейса http</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._http.status' type="checkbox"  id="http_enabled"> <label class="text-info text-checkbox" for="http_enabled">Включить Web интерфейс</p>
+                            </div>
+                            <div class='col-sm-8 setting_form'>
+                                <label class="text-info">IP адрес (Рекомендуем 127.0.0.1)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.ip' type="text" class="form-control" placeholder="127.0.0.1"  title="IP адрес, на котором следует запустить интерфейс(Рекомендуем 127.0.0.1)">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">Порт<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.port' type="text" class="form-control" placeholder="4040"  title="Порт">
+                            </div>
+
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пользователь<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.login' type="text" class="form-control" placeholder="login"  title="Пользователь">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.password' type='{{show_http_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль пользователя">
+                                <span class='fa input_show_password' ng-class='show_http_pass?"fa-eye":"fa-eye-slash"' ng-click='show_http_pass=!show_http_pass'></span>
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Секретный ключ сервера<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.key' type='{{show_http_key?"text":"password"}}' class="form-control" placeholder="Секретный ключ"  title="Секретный ключ">
+                                <span class='fa input_show_password' ng-class='show_http_key?"fa-eye":"fa-eye-slash"' ng-click='show_http_key=!show_http_key'></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==2'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки SMTP</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smtp.status' type="checkbox"  id="smtp_enabled"> <label class="text-info text-checkbox" for="smtp_enabled">Включить отправку email сообщений</p>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Адрес cервера исходящей почты(SMTP-сервер)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.host' type="text" class="form-control" placeholder="smtp.example.com"  title="Адрес cервера исходящей почты(SMTP-сервер)">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Порт cервера исходящей почты(SMTP-сервер)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.port' type="text" class="form-control" placeholder="465"  title="Порт cервера исходящей почты(SMTP-сервер)">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Полное имя почтового ящика<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.user' type="text" class="form-control" placeholder="name@example.com"  title="Полное имя почтового ящика, включая логин, @ и домен">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input type='{{show_smtp_pass?"text":"password"}}' ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.password' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smtp_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smtp_pass=!show_smtp_pass'></span>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p ng-disabled='!edit_settings._smtp.status'  class="p_container_checkbox"><input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.secure' type="checkbox"  id="smtp_secure"> <label class="text-info text-checkbox" for="smtp_secure">SMTP сервер защищен</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==3'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки telegram</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._telegram.status' type="checkbox"  id="telegram_enabled"> <label class="text-info text-checkbox" for="telegram_enabled">Включить отправку telagram сообщений</p>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Бот токен<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.token' type="text" class="form-control" placeholder="999999999:AAAAAAAAAAAAAAA-ooooooooooooooooooo"  title="Бот токен">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Чат ID администратора</label>
+                                <input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.chatId' type="text" class="form-control" placeholder="333333333"  title="Чат ID администратора">
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._telegram.status'><input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.proxy_status' type="checkbox"  id="proxy_socks5_enabled"> <label class="text-info text-checkbox" for="proxy_socks5_enabled">Использовать SOCKS5 прокси сервер</p>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Адрес SOCKS5 прокси сервера </label>
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_host' type="text" class="form-control" placeholder="example.com"  title="Адрес SOCKS5 прокси сервера">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Порт SOCKS5 прокси сервера</label>
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_port' type="text" class="form-control" placeholder="1080"  title="Порт SOCKS5 прокси сервера">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пользователь SOCKS5</label>
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_login' type="text" class="form-control" placeholder="name"  title="Полное имя почтового ящика, включая логин, @ и домен">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль пользователя SOCKS5</label>
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_password' type='{{show_tel_proxy_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_tel_proxy_pass?"fa-eye":"fa-eye-slash"' ng-click='show_tel_proxy_pass=!show_tel_proxy_pass'></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==4'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки SMSC API</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smsc.status' type="checkbox"  id="smsc_enabled"> <label class="text-info text-checkbox" for="smsc_enabled">Включить отправку голосовых дозвонов SMSC</p>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Логин API SMSC.ru<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.login' type="text" class="form-control" placeholder="login"  title="Логин API SMSC.ru">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль API SMSC.ru<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.password' type='{{show_smsc_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smsc_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smsc_pass=!show_smsc_pass'></span>
+                            </div>
+                            <div class='col-sm-6'>
+                                <label class="text-info">Голос</label>
+                                <select ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.voice' title="Голос" class="form-control">
+                                    <option value='m' > Мужской №1</option>
+                                    <option value='m2'> Мужской №2</option>
+                                    <option value='w' > Женский №1</option>
+                                    <option value='w2'> Женский №2</option>
+                                    <option value='w3'> Женский №3</option>
+                                    <option value='w4'> Женский №4</option>
+                                </select>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Отправитель</label>
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.sender' type="text" class="form-control" placeholder="-"  title="Отправитель">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==5'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки SMPP</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smpp.status' type="checkbox"  id="smpp_enabled"> <label class="text-info text-checkbox" for="smpp_enabled">Включить отправку SMS сообщений</p>
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Адрес SMPP шлюза<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.host' type="text" class="form-control" placeholder="smpp.example.ru"  title="Адрес SMPP шлюза">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Порт SMPP шлюза<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.port' type="text" class="form-control" placeholder="3340"  title="Порт SMPP шлюза">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Логин/Пользователь/SystemId<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.system_id' type="text" class="form-control" placeholder="SystemId"  title="Логин/Пользователь/SystemId">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.password' type='{{show_smpp_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smpp_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smpp_pass=!show_smpp_pass'></span>
+                            </div>
+                            <div class='col-sm-12 setting_form'><hr></div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">system_type</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.system_type' type="text" class="form-control" placeholder="null"  title="Identifies the type of ESME system requesting to bind as a transceiver with the MC. [VMS,OTA,null]">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">interface_version</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.interface_version' type="text" class="form-control" placeholder="52"  title="Identifies the version of the SMPP protocol supported by the ESME.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">address_range</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.address_range' type="text" class="form-control" placeholder="null"  title="A single ESME address or a range of ESME addresses served via this SMPP transceiver session. Set to NULL if not known.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">addr_ton</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.addr_ton' type="text" class="form-control" placeholder="null"  title="Type of Number (TON) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">addr_npi</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator (NPI) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">source_addr</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr' type="text" class="form-control" placeholder="example"  title="The sender of the message">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">source_addr_ton</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr_ton' type="text" class="form-control" placeholder="5"  title="Type of Number for source address. If not known, set to NULL (Unknown).">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">service_type</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.service_type' type="text" class="form-control" placeholder="null"  title="The service_type parameter can be used to indicate the SMS Application service associated with the message. Specifying the service_type allows theESME to avail of enhanced messaging services such as “replace by service_type” or to control the teleservice used on the air interface. Set to NULL for default MC settings">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">source_addr_npi</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator for source address. If not known, set to NULL(Unknown).">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">dest_addr_ton</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.dest_addr_ton' type="text" class="form-control" placeholder="1"  title="Type of Number for destination">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">dest_addr_npi</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.dest_addr_npi' type="text" class="form-control" placeholder="1"  title="Numbering Plan Indicator for destination">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">esm_class</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.esm_class' type="text" class="form-control" placeholder="5"  title="Indicates Message Mode and Message Type">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">protocol_id</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.protocol_id' type="text" class="form-control" placeholder="5"  title="Protocol Identifier. Network specific field.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">priority_flag</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.priority_flag' type="text" class="form-control" placeholder="5"  title="Designates the priority level of the message">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">schedule_delivery_time</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.schedule_delivery_time' type="text" class="form-control" placeholder="null"  title="The short message is to be scheduled by the MC for delivery. Set to NULL for immediate message delivery">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">validity_period</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.validity_period' type="text" class="form-control" placeholder="null"  title="The validity period of this message. Set to NULL to request the MC default validity period">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">registered_delivery</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.registered_delivery' type="text" class="form-control" placeholder="0"  title="Indicator to signify if a MC delivery receipt, manual ACK, delivery ACK or an intermediate notification is required.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">replace_if_present_flag</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.replace_if_present_flag' type="text" class="form-control" placeholder="5"  title="Flag indicating if the submitted message shouldn replace an existing message.">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">data_coding</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.data_coding' type="text" class="form-control" placeholder="5"  title="Defines the encoding scheme of the short message user data">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">sm_default_msg_id</label>
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.sm_default_msg_id' type="text" class="form-control" placeholder="null"  title="Indicates the short message to send from a list of pre- defined (‘canned’) short messages stored on the MC. If not using a MC canned message, set to NULL.">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==6'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки администратора сети</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._administrator.status' type="checkbox"  id="administrator_enabled"> <label class="text-info text-checkbox" for="administrator_enabled">Включить возможности администратора сети</p>
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Телефонный номер администратора сети</label>
+                                <input ng-disabled='!edit_settings._administrator.status'  ng-model='edit_settings._administrator.phone' type="text" class="form-control" placeholder="+7**********"  title="Телефонный номер администратора сети. На этот номер будут приходить сообщения от smpp и smsc.">
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="text-info">Типы сообщений для администраторов:</p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.gateway_active' type="checkbox"  id="gateway_active"> <label class="text-info text-checkbox" for="gateway_active">Статус базовой станции изменился на активный</p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.gateway_inactive' type="checkbox"  id="gateway_inactive"> <label class="text-info text-checkbox" for="gateway_inactive">Статус базовой станции изменился на не активный</p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.server_not_available' type="checkbox"  id="server_not_available"> <label class="text-info text-checkbox" for="server_not_available">Потеряна связь с сервером</p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.test_startup_message' type="checkbox"  id="test_startup_message"> <label class="text-info text-checkbox" for="test_startup_message">При запуске, проверять каналы связи</p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.low_battery' type="checkbox"  id="low_battery"> <label class="text-info text-checkbox" for="low_battery">Отправлять сообщение о низком заряде батареи на устройстве</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==7'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Прочие настройки </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._system.debugMOD' type="checkbox"  id="debug_enabled"> <label class="text-info text-checkbox" for="debug_enabled">Режим отладки<span class='required' title="Поле обязательное для заполнения"> *</span></p>
+                            </div>
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._system.auto_update' type="checkbox"  id="auto_update"> <label class="text-info text-checkbox" for="auto_update">Автообновление приложения<span class='required' title="Поле обязательное для заполнения"> *</span></p>
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Время задержки между отправками СМС сообщений, в миллисекундах. (-1 без задержки)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._system.betweenTimeSMS' type="text" class="form-control" placeholder="30000"  title="Время задержки между отправками СМС сообщений, в миллисекундах">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </section>
+    <section ng-show='page==2'>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-xs-12">
+                    <h1 class="h1-logs">Логи</h1> <button type="button" class="btn btn-success btn-dowload-logs" ng-click='downloadLog()'>Выгрузить <span class="fa fa-save"></span></button>
+                </div>
+                <div class="col-sm-12 col-md-12 col-xs-12 padding0">
+                    <div class="col-sm-4 col-md-4 col-xs-12 padding-bottom-0_5r">
+                        <div class="input-group">
+                            <input class='form-control' placeholder="Искать" ng-model='filterLog'>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default"><span class='fa fa-search'></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-3 col-xs-8 padding-bottom-0_5r">
+                        <div class="btn-group button_settings">
+                            
+                            <button type="button" class="btn btn-default" ng-click='clearLog()'>Очистить</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-3 col-xs-4 padding-bottom-0_5r">
+                        <label for="autoscroll" class="checkbox">
+                            <input type="checkbox" id="autoscroll" ng-model='autoScrollLogs'> Автопромотка
+                        </label>
+                    </div>
+                    
+                </div>
+                <div class="col-sm-12 col-md-12 col-xs-12 table-logs-container">
+                    <table class="table table-logs">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Дата</td>
+                                <td>Время</td>
+                                <td>Модуль</td>
+                                <td>Сообщение</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat = "log in logs | filter_object | orderBy:'timestamp'" ng-if='findLog(log)'>
+                                <td title="{{titleLog(log.level)}}" class="help"><span class="fa fa-circle" ng-class='classLog(log.level)'></span></td>
+                                <td>{{convertTime(log.timestamp,'DD MMMM YYYY')}}</td>
+                                <td>{{convertTime(log.timestamp,'HH:mm')}}</td>
+                                <td>{{log.module}}</td>
+                                <td>{{log.message}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/angular.min.js"></script>
+    <script src="./js/angular-sanitize.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
+
