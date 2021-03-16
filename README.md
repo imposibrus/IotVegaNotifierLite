@@ -29,11 +29,19 @@ apt-get install -y nodejs`
 #### Installing and running the application
 - Make a clone of the repository IotVegaNotifier `git clone https://github.com/VegaAbsolute/IotVegaNotifierLite.git`
 - Go to the Applications folder IotVegaNotifier `cd IotVegaNotifierLite`
+##### If OS Linux
 - Running the application `pm2 start npm -- start`
 - Configure IotVegaNotifier. Edit the config.ini file.
 - Restart the application so that the settings are applied `pm2 restart 0`
 > To view the program work use the command `pm2 monit`
-To exit the console, press CTRL+D
+> To exit the console, press CTRL+D
+##### If OS Windows
+- Running the application `npm start`
+- Exit, press CTRL+D
+- Configure IotVegaNotifierLite. Edit the config.ini file.
+- Running the application `npm start` or Configuring autorun
+
+
 #### Configuring autorun
 ##### If pm2
 - `pm2 save`
