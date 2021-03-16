@@ -28,13 +28,20 @@ apt-get install -y nodejs`
 - Install git (examle for ubuntu `apt-get install git`)
 #### Installing and running the application
 - Make a clone of the repository IotVegaNotifier `git clone https://github.com/VegaAbsolute/IotVegaNotifierLite.git`
-- Go to the Applications folder IotVegaNotifier `cd IotVegaNotifier`
+- Go to the Applications folder IotVegaNotifier `cd IotVegaNotifierLite`
 - Running the application `pm2 start npm -- start`
 - Configure IotVegaNotifier. Edit the config.ini file.
 - Restart the application so that the settings are applied `pm2 restart 0`
 > To view the program work use the command `pm2 monit`
 To exit the console, press CTRL+D
-
+#### Configuring autorun
+##### If pm2
+- `pm2 save`
+- `pm2 startup` and You simply have to copy/paste the line PM2 gives you and the startup script will be configured for your OS.
+##### Windows
+- `npm install -g qckwinsvc`
+- `qckwinsvc --name "IotVegaNotifierLite" --description "IotVegaNotifierLite" –script "G:\IOT VEGA\IotVegaNotifierLite\index.js" –startImmediately` - Where "G: \ IOT VEGA \ Iot Vega Notifier Lite \ index.js" is your application path
+ 
 [Description http API rus](api.md)
 
 ## Support devices
@@ -70,7 +77,7 @@ To exit the console, press CTRL+D
 - gateway active
 - gateway inactive
 - server not available
-- startup notifire
+- startup notifiere
 
 ## Maximum version compatibility:
 1.0.0 with IotVegaPulse v1.1.11b 
