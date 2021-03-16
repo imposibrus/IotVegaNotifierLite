@@ -13,9 +13,11 @@ or
 `curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
 sudo apt-get install -y nodejs`
 
+
 - Using Debian, as root
 `curl -fsSL https://deb.nodesource.com/setup_15.x | bash -
 apt-get install -y nodejs`
+
 
 - Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
 - Install git (examle for ubuntu `apt-get install git`)
