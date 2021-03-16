@@ -38,7 +38,7 @@ To exit the console, press CTRL+D
 ##### If pm2
 - `pm2 save`
 - `pm2 startup` and You simply have to copy/paste the line PM2 gives you and the startup script will be configured for your OS.
-##### Windows
+##### If OS Windows
 - `npm install -g qckwinsvc`
 - `qckwinsvc --name "IotVegaNotifierLite" --description "IotVegaNotifierLite" –script "G:\IOT VEGA\IotVegaNotifierLite\index.js" –startImmediately` - Where "G: \ IOT VEGA \ Iot Vega Notifier Lite \ index.js" is your application path
  
