@@ -4,6 +4,8 @@ Application to notify IotVegaServer users about an alarm event.
 ## Quick start
 #### Preparation
 - Install node.js 
+
+
 [download](https://nodejs.org/en/download/)
 
 
