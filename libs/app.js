@@ -2033,11 +2033,11 @@ function free()
     emergencyExit();
   }
 }
-function emergencyExit()
+function emergencyExit(type)
 {
   if (smpp.employment||smsc.employment||telegram.employment||smtp.employment)
   {
-    return;
+    if( type !== 'settings' ) return;
   }
   process.exit(1);
 }
@@ -2449,7 +2449,7 @@ function saveSettings(request,response)
     }
     response.end(JSON.stringify(result));
     waitingReboot = true;
-    emergencyExit();
+    emergencyExit('settings');
   }
 }
 function downloadLogFile(request,response)
