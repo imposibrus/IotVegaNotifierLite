@@ -1,5 +1,5 @@
 
-//vega_telegram.js version 2.0.0 lite
+//vega_telegram.js version 2.0.1 lite
 process.env.NTBA_FIX_319 = 1;
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -216,19 +216,29 @@ class VegaTelegram extends EventEmitter
                                 let currentTime = new Date().getTime();
                                 let timePassed = firstTime?(currentTime-firstTime):0;
                                 let lifeTime = timePassed<86400000;
-                                if(lifeTime)
+                                let save = true;
+                                let otherInfoLog = '';
+                                if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
+                                {
+                                  save = false;
+                                }
+                                if(lifeTime && save)
                                 {
                                     _self.pushMessage(tmp.message,tmp.chatId,tmp.firstTime);
                                 }
+                                else
+                                {
+                                  otherInfoLog = ' The message wont repeat send.';
+                                }
                                 logger.log({
                                   level:'warn',
-                                  message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message,
+                                  message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog,
                                   module:'[TELEGRAM]',
                                   time:moment().format('LLL'),
                                   timestamp:parseInt(moment().format('x')),
                                   uuid:uuidv4()
                                 });
-                                console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message);
+                                console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog);
                                 _self.checkStackEmptiness();
                             }
                         }
