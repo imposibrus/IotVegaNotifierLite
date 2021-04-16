@@ -1937,10 +1937,8 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            console.log('!!!!!','Данные пришли');
             if ( port !== 2 ) return;
             channel = dev.get_channel(1);
-            console.log('!!!!!','Данные пришли порт 2');
             let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
             if ( validChannel )
             {
