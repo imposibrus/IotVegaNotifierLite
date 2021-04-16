@@ -1,7 +1,6 @@
 //parser.js version 1.1.6b
 //Соответствует pulse v 1.1.12b
 //Идентичен классу Parser из vega_parser.js iotvega pulse
-//за исключением того что функция isObject в данном классе метод
 class Parser
 {
     constructor(dt,data,port,version,key_map)
@@ -544,7 +543,7 @@ class Parser
     {
         try
         {
-            if( !isObject(bytes)||bytes.length < 4 ) bytes = [28,29,30,31];
+            if( !this.isObject(bytes)||bytes.length < 4 ) bytes = [28,29,30,31];
             bytes.reverse();
             var state = '';
             for(var i = 0; i<bytes.length; i++)
@@ -1642,7 +1641,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1686,7 +1685,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1730,7 +1729,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1778,7 +1777,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1826,7 +1825,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1875,7 +1874,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1920,7 +1919,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1969,7 +1968,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -2012,7 +2011,7 @@ class Parser
     }
     _set_version(arr_b,param)
     {
-        var valid_arr = isObject(arr_b) && arr_b.length;
+        var valid_arr = this.isObject(arr_b) && arr_b.length;
         try
         {
             if(valid_arr)
@@ -2038,7 +2037,7 @@ class Parser
     }
     _set_version_soft_device(arr_b)
     {
-        var valid_arr = isObject(arr_b) && arr_b.length;
+        var valid_arr = this.isObject(arr_b) && arr_b.length;
         try
         {
             if(valid_arr)
@@ -2064,7 +2063,7 @@ class Parser
     }
     // _set_status_electronic_meter(arr_b)
     // {
-    //     var valid_arr = isObject(arr_b) && arr_b.length;
+    //     var valid_arr = this.isObject(arr_b) && arr_b.length;
     //     try
     //     {
     //         if(valid_arr)
@@ -2092,7 +2091,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -2128,7 +2127,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
