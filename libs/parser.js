@@ -1,5 +1,5 @@
-//parser.js version 1.1.5
-//Соответствует pulse v 1.1.10
+//parser.js version 1.1.6b
+//Соответствует pulse v 1.1.12b
 //Идентичен классу data_lora из vega_lib.js iotvega pulse
 //за исключением того что функция isObject в данном классе метод
 class Parser
@@ -40,6 +40,21 @@ class Parser
         this.sensor_rate_3;
         this.sensor_rate_4;
         this.sensor_rate_sum;
+
+        this.status_fog;
+        this.status_fire;
+        this.status_test;
+        this.status_guard;
+        this.status_faulm;
+        this.status_alarm;
+        this.status_detach;
+        this.status_common;
+        this.current_mV;
+        this.current_mA;
+        this.battery_select_1;
+        this.battery_select_2;
+        this.battery_persent_1;
+        this.battery_persent_2;
         
         this.in_move;
         this.angle;
@@ -529,7 +544,7 @@ class Parser
     {
         try
         {
-            if( !this.isObject(bytes)||bytes.length < 4 ) bytes = [28,29,30,31];
+            if( !isObject(bytes)||bytes.length < 4 ) bytes = [28,29,30,31];
             bytes.reverse();
             var state = '';
             for(var i = 0; i<bytes.length; i++)
@@ -571,12 +586,90 @@ class Parser
             return false;
         }
     }
+    // парсит битовое поле статуса ss0102
+    _set_status_ss0102(byte)
+    {
+        try
+        {
+            if( byte === undefined ) byte = 5;
+            var status= parseInt(this.hex_array[byte],16).toString(2).split('').reverse();
+            if ( status[0] == 1 && parseInt(status[0]) )
+            {
+                this.status_fog = true;
+            }
+            else
+            {
+                this.status_fog = false;
+            }
+            if ( status[1] == 1 && parseInt(status[1]) )
+            {
+                this.status_fire = true;
+            }
+            else
+            {
+                this.status_fire = false;
+            }
+            if ( status[2] == 1 && parseInt(status[2]) )
+            {
+                this.status_test = true;
+            }
+            else
+            {
+                this.status_test = false;
+            }
+            if ( status[3] == 1 && parseInt(status[3]) )
+            {
+                this.status_guard = true;
+            }
+            else
+            {
+                this.status_guard = false;
+            }
+            if ( status[4] == 1 && parseInt(status[4]) )
+            {
+                this.status_faulm = true;
+            }
+            else
+            {
+                this.status_faulm = false;
+            }
+            if ( status[5] == 1 && parseInt(status[5]) )
+            {
+                this.status_alarm = true;
+            }
+            else
+            {
+                this.status_alarm = false;
+            }
+            if ( status[6] == 1 && parseInt(status[6]) )
+            {
+                this.status_detach = true;
+            }
+            else
+            {
+                this.status_detach = false;
+            }
+            if ( status[7] == 1 && parseInt(status[7]) )
+            {
+                this.status_common = true;
+            }
+            else
+            {
+                this.status_common = false;
+            }
+            return true;
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
     _set_status_tp11(byte)
     {
         try
         {
             if( byte === undefined ) byte = 5;
-            var status= parseInt(this.hex_array[byte],16).toString(2).split('' ).reverse().splice(0,6);
+            var status= parseInt(this.hex_array[byte],16).toString(2).split('').reverse().splice(0,6);
             if (status[0]==1&&parseInt(status[0]))
             {
                 this.type_powered = 'external';
@@ -628,7 +721,7 @@ class Parser
     {
         try
         {
-            var ss= parseInt(this.hex_array[b],16).toString(2).split('' ).reverse().splice(0,6);
+            var ss= parseInt(this.hex_array[b],16).toString(2).split('').reverse().splice(0,6);
             var b1 = ss[0]!==undefined?ss[0].toString():'0';
             var b2 = ss[1]!==undefined?ss[1].toString():'0';
             var reason = b2+b1;
@@ -772,6 +865,7 @@ class Parser
             return false;
         }
     }
+    
     _set_switch_device_tp11()
     {
         try
@@ -1548,7 +1642,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1592,7 +1686,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1636,7 +1730,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1684,7 +1778,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1732,7 +1826,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1781,7 +1875,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1826,7 +1920,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1875,7 +1969,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1918,7 +2012,7 @@ class Parser
     }
     _set_version(arr_b,param)
     {
-        var valid_arr = this.isObject(arr_b) && arr_b.length;
+        var valid_arr = isObject(arr_b) && arr_b.length;
         try
         {
             if(valid_arr)
@@ -1944,7 +2038,7 @@ class Parser
     }
     _set_version_soft_device(arr_b)
     {
-        var valid_arr = this.isObject(arr_b) && arr_b.length;
+        var valid_arr = isObject(arr_b) && arr_b.length;
         try
         {
             if(valid_arr)
@@ -1970,7 +2064,7 @@ class Parser
     }
     // _set_status_electronic_meter(arr_b)
     // {
-    //     var valid_arr = this.isObject(arr_b) && arr_b.length;
+    //     var valid_arr = isObject(arr_b) && arr_b.length;
     //     try
     //     {
     //         if(valid_arr)
@@ -1998,7 +2092,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -2034,7 +2128,7 @@ class Parser
     {
         try
         {
-            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_arr = isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -4055,6 +4149,25 @@ class Parser
         res = res && this._set_universal_int( [11], 'count' );
         return res;
     }
+    ss0102_package()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0], 'reason' );
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_status_ss0102(5);
+
+        res = res && this._set_universal_int( [6,7], 'current_mV' );
+        res = res && this._set_universal_int( [8,9], 'current_mA' );
+        res = res && this._set_universal_float_negative( [10,11],1,'temperature' );
+
+        res = res && this._set_universal_boolean(12,'battery_select_1' );
+        res = res && this._set_universal_boolean(13,'battery_select_2' );
+        res = res && this._set_universal_boolean(14,'battery_persent_1' );
+        res = res && this._set_universal_boolean(15,'battery_persent_2' );
+        res = res && this._set_universal_int( [16], 'charge' );
+
+        return res;
+    }
     um0101_package()
     {
         var res = true;
@@ -4341,7 +4454,7 @@ class Parser
               //  console.log('Данные си11' );
                 if (this._set_hex(hex))
                 {
-                    let port = this.port;
+                    var port = this.port;
                     if( port == 4 )
                     {
                         if(this.type_package == 255) return this.package_correction_time();
@@ -4423,7 +4536,7 @@ class Parser
              //   console.log('Данные си13' );
                 if (this._set_hex(hex))
                 {
-                    let port = this.port;
+                    var port = this.port;
                     if ( port == 2 )
                     {
                         if ( this.version == 0 )
@@ -4808,7 +4921,7 @@ class Parser
             case 18:
                 if (this._set_hex(hex))
                 {
-                    let port = this.port;
+                    var port = this.port;
                     if( port == 4 )
                     {
                         if(this.type_package == 255) return this.package_correction_time();
@@ -4944,8 +5057,8 @@ class Parser
                     // console.log('Данные spbzip' );
                     if (this._set_hex(hex))
                     {
-                        let port = this.port;
-                        let type_package = this.type_package;
+                        var port = this.port;
+                        var type_package = this.type_package;
                         if( port == 2 )
                         {
                             if(type_package == 1) return this.spbzip_package_1();
@@ -5004,7 +5117,7 @@ class Parser
                 break;
             case 25:
                 //   console.log('Данные um0101' );
-                let port = this.port;
+                var port = this.port;
                 if ( this._set_hex(hex) && port == 2 )
                 {
                     return this.um0101_package();
@@ -5017,7 +5130,7 @@ class Parser
             case 26:
                 if (this._set_hex(hex))
                 {
-                    let port = this.port;
+                    var port = this.port;
                     if( port == 2 )
                     {
                         return this.src_package();
@@ -5080,7 +5193,7 @@ class Parser
                 //  console.log('Данные си13 therm' );
                 if (this._set_hex(hex))
                 {
-                    let port = this.port;
+                    var port = this.port;
                     if( port == 4 )
                     {
                         if(this.type_package == 255) return this.package_correction_time();
@@ -5109,13 +5222,22 @@ class Parser
                     return false;
                  }
                 break;
+            case 31:
+                //console.log('Данные SS0102' );
+                var port = this.port;
+                if ( !this._set_hex(hex) ) return false;
+                if (  port == 2 ) return this.ss0102_package();
+                else if( port == 4 && this.type_package == 255 ) return this.package_correction_time();
+                else if( port == 3 && this.type_package == 0 ) return this.package_settings();
+                else if( port == 195 && this.type_package == 195 ) return this.si_21_or_22_package_195_rev2();
+                else if( port == 85 ) return this.si_21_or_22_package_85_rev2();
+                else return false;
+                break;
             default:
                 console.log('Данные неизвестного для типа' );
                 return false;
                 break;
         }
     }
-    
-    
 }
 module.exports = Parser;
