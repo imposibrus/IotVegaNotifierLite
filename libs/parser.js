@@ -1,6 +1,6 @@
 //parser.js version 1.1.6b
 //Соответствует pulse v 1.1.12b
-//Идентичен классу data_lora из vega_lib.js iotvega pulse
+//Идентичен классу Parser из vega_parser.js iotvega pulse
 //за исключением того что функция isObject в данном классе метод
 class Parser
 {

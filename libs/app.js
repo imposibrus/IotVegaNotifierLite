@@ -192,6 +192,21 @@ function parseReason(typeDev,version,reason,channel)
     if ( reason === 0 || reason === '0' ) return 'По времени';
     else if ( reason === 1 ) return 'Задымление';
   }
+  else if ( typeDev == 'ss0102' )
+  {
+    if ( reason === 5 ) return 'Тревога по обнаружению пожара';
+    else if ( reason === 6 ) return 'Тест';
+    else if ( reason === 7 ) return 'Тревога по солидарной линии работы';
+    else if ( reason === 8 ) return 'Снятие с крепежной платформы';
+    else if ( reason === 9 ) return 'Сброс тревоги';
+    else if ( reason === 10 ) return 'Низкий заряд АКБ';
+    else if ( reason === 11 ) return 'Постановка на охрану';
+    else if ( reason === 12 ) return 'Стоп охраны датчика';
+    else if ( reason === 13 ) return 'Отключение охраны';
+    else if ( reason === 14 ) return 'Ошибка датчика';
+    else if ( reason === 15 ) return 'Запыленность камеры датчика';
+    else if ( reason === 16 ) return 'По времени';
+  }
   else if ( typeDev == 'mercury' )
   {
     if ( reason === 1 ) return 'По времени';
@@ -1903,6 +1918,38 @@ function rx(obj)
                 otherInfo.num = originalNum;
                 dev.lastDateSMS = currentDate;
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+              }
+            }
+            break;
+          }
+          case 31:
+          {
+            otherInfo.model = 'SS-0102';
+            if ( config.debugMOD ) 
+            {
+              console.log(moment().format('LLL')+': '+'data from device SS ');
+              logger.log({
+                level:'info',
+                message:'data from device SS0102',
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
+              });
+            }
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
+            {
+              otherInfo.reasonText = '';
+              otherInfo.reason = dataDevice.reason;
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 6 && dataDevice.reason !== 9 && dataDevice.reason !== 16;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  otherInfo.reasonText += parseReason('ss0102', dev.version, otherInfo.reason, channel)+'. ';
+                  wasAlarm(timeServerMs,dev.get_channel(1),obj.fcnt,devEui,otherInfo);
               }
             }
             break;
