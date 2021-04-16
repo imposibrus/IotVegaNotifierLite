@@ -1927,7 +1927,7 @@ function rx(obj)
             otherInfo.model = 'SS-0102';
             if ( config.debugMOD ) 
             {
-              console.log(moment().format('LLL')+': '+'data from device SS ');
+              console.log(moment().format('LLL')+': '+'data from device SS0102 ');
               logger.log({
                 level:'info',
                 message:'data from device SS0102',
@@ -1937,8 +1937,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
+            console.log('!!!!!','Данные пришли');
             if ( port !== 2 ) return;
             channel = dev.get_channel(1);
+            console.log('!!!!!','Данные пришли порт 2');
             let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
             if ( validChannel )
             {
