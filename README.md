@@ -74,6 +74,7 @@ apt-get install -y nodejs`
 - SMART AS-0101
 - SMART MS-0101
 - SMART SS-0101
+- SMART SS-0102
 - SMART UM-0101
 - SPBZIP 2726/2727
 - Mercury
