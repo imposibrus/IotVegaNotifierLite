@@ -1,5 +1,5 @@
 
-//vega_telegram.js version 2.0.1 lite
+//vega_telegram.js version 2.0.2 lite
 process.env.NTBA_FIX_319 = 1;
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -219,6 +219,10 @@ class VegaTelegram extends EventEmitter
                                 let save = true;
                                 let otherInfoLog = '';
                                 if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
+                                {
+                                  save = false;
+                                }
+                                else if(res.err.message.indexOf('bot was blocked by the user') !== -1)
                                 {
                                   save = false;
                                 }
