@@ -1,5 +1,5 @@
 
-//vega_telegram.js version 2.0.2 lite
+//vega_telegram.js version 2.0.3 lite
 process.env.NTBA_FIX_319 = 1;
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -205,47 +205,60 @@ class VegaTelegram extends EventEmitter
                     }
                     else
                     {
-                        for(var j = 0 ; j < _self._stack.length;j++)
-                        {
-                            if(_self._stack[j].uuid === res.uuid)
-                            {
-                                _self._stack[j].status = false;
-                                let tmp = _self._stack[j];
-                                _self._stack.splice(j,1);
-                                let firstTime = tmp.firstTime;
-                                let currentTime = new Date().getTime();
-                                let timePassed = firstTime?(currentTime-firstTime):0;
-                                let lifeTime = timePassed<86400000;
-                                let save = true;
-                                let otherInfoLog = '';
-                                if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
-                                {
-                                  save = false;
-                                }
-                                else if(res.err.message.indexOf('bot was blocked by the user') !== -1)
-                                {
-                                  save = false;
-                                }
-                                if(lifeTime && save)
-                                {
-                                    _self.pushMessage(tmp.message,tmp.chatId,tmp.firstTime);
-                                }
-                                else
-                                {
-                                  otherInfoLog = ' The message wont repeat send.';
-                                }
-                                logger.log({
-                                  level:'warn',
-                                  message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog,
-                                  module:'[TELEGRAM]',
-                                  time:moment().format('LLL'),
-                                  timestamp:parseInt(moment().format('x')),
-                                  uuid:uuidv4()
-                                });
-                                console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog);
-                                _self.checkStackEmptiness();
-                            }
-                        }
+                      let editStatusConnect = false;
+                      for(var j = 0 ; j < _self._stack.length;j++)
+                      {
+                          if(_self._stack[j].uuid === res.uuid)
+                          {
+                              _self._stack[j].status = false;
+                              let tmp = _self._stack[j];
+                              _self._stack.splice(j,1);
+                              let firstTime = tmp.firstTime;
+                              let currentTime = new Date().getTime();
+                              let timePassed = firstTime?(currentTime-firstTime):0;
+                              let lifeTime = timePassed<86400000;
+                              let save = true;
+                              let otherInfoLog = '';
+                              if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('have no rights to send a message') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('bot was blocked by the user') !== -1)
+                              {
+                                save = false;
+                              }
+                              else
+                              {
+                                editStatusConnect = true;
+                              }
+                              if(lifeTime && save)
+                              {
+                                  _self.pushMessage(tmp.message,tmp.chatId,tmp.firstTime);
+                              }
+                              else
+                              {
+                                otherInfoLog = ' The message wont repeat send.';
+                              }
+                              logger.log({
+                                level:'warn',
+                                message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog,
+                                module:'[TELEGRAM]',
+                                time:moment().format('LLL'),
+                                timestamp:parseInt(moment().format('x')),
+                                uuid:uuidv4()
+                              });
+                              console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message+otherInfoLog);
+                              _self.checkStackEmptiness();
+                          }
+                      }
+                      if ( editStatusConnect )
+                      {
+                        _self._connect._status = false;
+                      }
                     }
                 })
                 .catch((e)=>{
@@ -276,7 +289,6 @@ class VegaTelegram extends EventEmitter
           resolve({status:true,uuid:uuid,username:res.chat.username!==undefined?res.chat.username:res.chat.title});
         })
         .catch((err)=>{
-            _self._connect._status = false;
             _self._connect._timeLastUpdate = new Date().getTime();
             resolve({status:false,uuid:uuid,err:err});
         });
