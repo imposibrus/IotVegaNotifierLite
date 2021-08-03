@@ -219,7 +219,31 @@ class VegaTelegram extends EventEmitter
                               let lifeTime = timePassed<86400000;
                               let save = true;
                               let otherInfoLog = '';
-                              if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
+                              if(res.err.message.indexOf('ETELEGRAM: 400') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('ETELEGRAM: 401') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('ETELEGRAM: 403') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('ETELEGRAM: 404') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('ETELEGRAM: 406') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message.indexOf('ETELEGRAM: 420') !== -1)
+                              {
+                                save = false;
+                              }
+                              else if(res.err.message == 'ETELEGRAM: 400 Bad Request: group chat was upgraded to a supergroup chat')
                               {
                                 save = false;
                               }
