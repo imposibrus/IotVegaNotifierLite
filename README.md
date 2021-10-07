@@ -89,7 +89,7 @@ apt-get install -y nodejs`
 - startup notifiere
 
 ## Maximum version compatibility:
-1.0.3 with IotVegaPulse v1.1.13b
+1.0.5 with IotVegaPulse v1.1.13b
 
 
 
