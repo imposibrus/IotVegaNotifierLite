@@ -54,6 +54,10 @@ let initalizationMessage = {
 };
 let countReloadServer = 0;
 let gateways = {};
+
+const tempSensorDevEui = '323033375B386C03';
+let tempSensorData = undefined;
+
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -716,6 +720,16 @@ function get_gateways_req()
   ws.send_json(message);
   return;
 }
+function get_temp_sensor_data_req()
+{
+  let message = {
+    cmd: 'get_data_req',
+    devEui: tempSensorDevEui,
+    select: {limit: 10},
+  };
+  ws.send_json(message);
+  return;
+}
 
 //------------------------------------------------------------------------------
 //commands iotvega.com
@@ -1014,8 +1028,12 @@ function rx(obj)
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
-                  dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                  if ((checkTemperature && dataDevice.reason != 5) && (tempSensorData.temperature >= -15 && tempSensorData.temperature <= 0)) {
+                    dev.lastDateSMS = currentDate;
+                    wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                  } else {
+                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, '. Not in [-15, 0] range.');
+                  }
                 }
               }
               else if ( dev.version === 0 )
@@ -2101,6 +2119,7 @@ function auth_resp(obj)
     statusAuth = true;
     get_device_appdata_req();
     get_gateways_req();
+    get_temp_sensor_data_req();
     console.log(moment().format('LLL')+': '+'Success authorization on server iotvega');
     logger.log({
       level:'info',
@@ -2138,6 +2157,23 @@ function initWS()
   ws.on('get_device_appdata_resp',get_device_appdata_resp);
   ws.on('get_gateways_resp',get_gateways_resp);
   ws.on('no_connect',serverNoConnect);
+  ws.on('get_data_resp', (resp) => {
+    if (!resp.status || resp.devEui !== tempSensorDevEui) {
+      return;
+    }
+
+    let dev = devices.find(resp.devEui);
+    const dataList = resp.data_list.slice().sort((a, b) => b.ts - a.ts);
+
+    for (const data of dataList) {
+      let dataDevice = new Parser(dev.type, data.data, data.port, dev.version);
+
+      if (Number.isFinite(dataDevice.temperature)) {
+        tempSensorData = dataDevice;
+        break;
+      }
+    }
+  });
 }
 
 function serverNoConnect()
