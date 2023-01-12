@@ -1020,19 +1020,24 @@ function rx(obj)
                 let checkTemperature = dataDevice.limit_exceeded;
                 if ( checkEvent || checkTemperature )
                 {
+                  const reasonTemperature = checkTemperature && dataDevice.reason != 5;
                   if (checkEvent)
                   {
                     otherInfo.reasonText += parseReason('td11', dev.version, otherInfo.reason, channel)+'. ';
                   }
-                  if (checkTemperature && dataDevice.reason != 5 )
+                  if (reasonTemperature )
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
-                  if ((checkTemperature && dataDevice.reason != 5) && (tempSensorData.temperature >= -15 && tempSensorData.temperature <= 0)) {
+                  if (
+                      reasonTemperature &&
+                      (tempSensorData.temperature <= -15 || tempSensorData.temperature >= 0) &&
+                      dev._devName.includes('♨')
+                  ) {
+                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, '. Not in [-15, 0] range.');
+                  } else {
                     dev.lastDateSMS = currentDate;
                     wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
-                  } else {
-                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, '. Not in [-15, 0] range.');
                   }
                 }
               }
