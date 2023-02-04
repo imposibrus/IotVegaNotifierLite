@@ -59,6 +59,11 @@ class Config
       password: 'iotvega',
       key:'0000-0000-0000-ffff'
     };
+    this._filter = {
+      temp_low: -5,
+      temp_high: 0,
+      temp_sensor_dev_eui: '',
+    };
   }
   //setters-------------------------
   set administrator_status(val)
@@ -317,6 +322,18 @@ class Config
   {
     this._telegram.proxy_password = val;
   }
+  set filter_temp_low(val)
+  {
+    this._filter.temp_low = val;
+  }
+  set filter_temp_high(val)
+  {
+    this._filter.temp_high = val;
+  }
+  set filter_temp_sensor_dev_eui(val)
+  {
+    this._filter.temp_sensor_dev_eui = val;
+  }
   //getters-------------------------
   get smtp()
   {
@@ -523,6 +540,18 @@ class Config
   get low_battery()
   {
     return this._administrator.low_battery;
+  }
+  get filter_temp_low()
+  {
+    return this._filter.temp_low;
+  }
+  get filter_temp_high()
+  {
+    return this._filter.temp_high;
+  }
+  get filter_temp_sensor_dev_eui()
+  {
+    return this._filter.temp_sensor_dev_eui;
   }
   //methods
   setFromConfig(config)

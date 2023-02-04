@@ -92,6 +92,7 @@
                         <li ng-class='page_settings==5?"active":""' ng-click='selectGroupSettings(5)'><a href="">SMPP</a></li>
                         <li ng-class='page_settings==6?"active":""' ng-click='selectGroupSettings(6)'><a href="">Администратор</a></li>
                         <li ng-class='page_settings==7?"active":""' ng-click='selectGroupSettings(7)'><a href="">Прочие</a></li>
+                        <li ng-class='page_settings==8?"active":""' ng-click='selectGroupSettings(8)'><a href="">Фильтр температур</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-9 col-md-9 col-xs-7">
@@ -414,6 +415,25 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-primary" ng-show='page_settings==8'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Фильтр температур </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Нижняя граница температуры<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._filter.temp_low' type="text" class="form-control" placeholder="-5"  title="Нижняя граница температуры">
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Верхняя граница температуры<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._filter.temp_high' type="text" class="form-control" placeholder="2"  title="Верхняя граница температуры">
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">DevEUI уличного датчика температуры<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-model='edit_settings._filter.temp_sensor_dev_eui' type="text" class="form-control" placeholder="323033375B386C03"  title="DevEUI уличного датчика температуры">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>  
@@ -474,7 +494,7 @@
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/angular.min.js"></script>
     <script src="./js/angular-sanitize.min.js"></script>
-    <script src="./js/app.js"></script>
+    <script src="./js/app.js?v=2"></script>
 </body>
 </html>
 

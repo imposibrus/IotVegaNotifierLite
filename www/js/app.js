@@ -19,6 +19,7 @@ class Settings
         };
         this._ws={};
         this._http={};
+        this._filter={};
     }
     clear()
     {
@@ -32,6 +33,7 @@ class Settings
         };
         this._ws={};
         this._http={};
+        this._filter={};
     }
     set_data_settings(conf)
     {
@@ -44,6 +46,7 @@ class Settings
         this.copyObject(conf._telegram,'_telegram');
         this.copyObject(conf._ws,'_ws');
         this.copyObject(conf._http,'_http');
+        this.copyObject(conf._filter,'_filter');
     }
     clone()
     {

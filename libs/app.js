@@ -55,7 +55,6 @@ let initalizationMessage = {
 let countReloadServer = 0;
 let gateways = {};
 
-const tempSensorDevEui = '323033375B386C03';
 let tempSensorData = undefined;
 
 //------------------------------------------------------------------------------
@@ -724,7 +723,7 @@ function get_temp_sensor_data_req()
 {
   let message = {
     cmd: 'get_data_req',
-    devEui: tempSensorDevEui,
+    devEui: config.filter_temp_sensor_dev_eui,
     select: {limit: 10},
   };
   ws.send_json(message);
@@ -1010,6 +1009,10 @@ function rx(obj)
             let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
             if ( validChannel )
             {
+              if (devEui === config.filter_temp_sensor_dev_eui && Number.isFinite(dataDevice.temperature)) {
+                tempSensorData = dataDevice;
+              }
+
               otherInfo.value = dataDevice.temperature;
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1031,10 +1034,10 @@ function rx(obj)
                   }
                   if (
                       reasonTemperature &&
-                      (tempSensorData.temperature <= -15 || tempSensorData.temperature >= 0) &&
+                      (tempSensorData.temperature <= config.filter_temp_low || tempSensorData.temperature >= config.filter_temp_high) &&
                       dev._devName.includes('♨')
                   ) {
-                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, '. Not in [-15, 0] range.');
+                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, `. Not in [${config.filter_temp_low}, ${config.filter_temp_high}] range.`);
                   } else {
                     dev.lastDateSMS = currentDate;
                     wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
@@ -2163,7 +2166,7 @@ function initWS()
   ws.on('get_gateways_resp',get_gateways_resp);
   ws.on('no_connect',serverNoConnect);
   ws.on('get_data_resp', (resp) => {
-    if (!resp.status || resp.devEui !== tempSensorDevEui) {
+    if (!resp.status || resp.devEui !== config.temp_sensor_dev_eui) {
       return;
     }
 
