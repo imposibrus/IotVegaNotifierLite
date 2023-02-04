@@ -1023,21 +1023,21 @@ function rx(obj)
                 let checkTemperature = dataDevice.limit_exceeded;
                 if ( checkEvent || checkTemperature )
                 {
-                  const reasonTemperature = checkTemperature && dataDevice.reason != 5;
+                  const reasonTemperature = checkTemperature || dataDevice.reason == 5;
                   if (checkEvent)
                   {
                     otherInfo.reasonText += parseReason('td11', dev.version, otherInfo.reason, channel)+'. ';
                   }
-                  if (reasonTemperature )
+                  if (checkTemperature && dataDevice.reason != 5 )
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
                   if (
-                      reasonTemperature &&
-                      (tempSensorData.temperature <= config.filter_temp_low || tempSensorData.temperature >= config.filter_temp_high) &&
-                      dev._devName.includes('♨')
+                    reasonTemperature &&
+                    (tempSensorData?.temperature <= config.filter_temp_low || tempSensorData?.temperature >= config.filter_temp_high) &&
+                    dev._devName.includes('♨')
                   ) {
-                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData.temperature, `. Not in [${config.filter_temp_low}, ${config.filter_temp_high}] range.`);
+                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData?.temperature, `. Not in [${config.filter_temp_low}, ${config.filter_temp_high}] range.`);
                   } else {
                     dev.lastDateSMS = currentDate;
                     wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
@@ -1053,6 +1053,7 @@ function rx(obj)
                 let checkTemperature = t<=t_min||t>=t_max;
                 if (checkEvent||checkTemperature)
                 {
+                  const reasonTemperature = checkTemperature || dataDevice.reason == 5;
                   if (checkEvent)
                   {
                     otherInfo.reasonText += parseReason('td11', dev.version, otherInfo.reason, channel)+'. ';
@@ -1061,8 +1062,16 @@ function rx(obj)
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
-                  dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                  if (
+                    reasonTemperature &&
+                    (tempSensorData?.temperature <= config.filter_temp_low || tempSensorData?.temperature >= config.filter_temp_high) &&
+                    dev._devName.includes('♨')
+                  ) {
+                    console.log('Filter-out notification for temperature sensor. Current temperature is', tempSensorData?.temperature, `. Not in [${config.filter_temp_low}, ${config.filter_temp_high}] range.`);
+                  } else {
+                    dev.lastDateSMS = currentDate;
+                    wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                  }
                 }
               }
               else
@@ -2166,7 +2175,7 @@ function initWS()
   ws.on('get_gateways_resp',get_gateways_resp);
   ws.on('no_connect',serverNoConnect);
   ws.on('get_data_resp', (resp) => {
-    if (!resp.status || resp.devEui !== config.temp_sensor_dev_eui) {
+    if (!resp.status || resp.devEui !== config.filter_temp_sensor_dev_eui) {
       return;
     }
 
